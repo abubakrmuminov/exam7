@@ -13,7 +13,6 @@ function Recipes() {
 
   const recipes = data?.data || [];
 
-  // Локальный фильтр
   const filteredRecipes = recipes.filter((recipe) => {
     if (prepTime && recipe.prepMinutes > parseInt(prepTime)) return false;
     if (cookTime && recipe.cookMinutes > parseInt(cookTime)) return false;
