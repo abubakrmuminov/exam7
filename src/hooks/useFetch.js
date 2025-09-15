@@ -9,10 +9,8 @@ export const useFetch = (url) => {
       setLoading(true);
       try {
         const res = await axios.get(url);
-        console.log("API response:", res.data);
         setData(res.data);
       } catch (err) {
-        console.error("Fetch error:", err.message);
         setError(err.message);
       } finally {
         setLoading(false);
