@@ -7,24 +7,15 @@ function Recipes() {
   const [cookTime, setCookTime] = useState("");
   const [search, setSearch] = useState("");
 
-  const { data, loading, error } = useFetch(
-    "https://json-api.uz/api/project/recipes/recipes"
-  );
+  let url = "https://json-api.uz/api/project/recipes/recipes";
+  const params = [];
+  if (prepTime) params.push(`prepMinutes=${prepTime}`);
+  if (cookTime) params.push(`cookMinutes=${cookTime}`);
+  if (search.trim() !== "") params.push(`slug=${search.trim()}`);
+  if (params.length > 0) url += "?" + params.join("&");
 
+  const { data, loading, error } = useFetch(url);
   const recipes = data?.data || [];
-
-  const filteredRecipes = recipes.filter((recipe) => {
-    if (prepTime && recipe.prepMinutes > parseInt(prepTime)) return false;
-    if (cookTime && recipe.cookMinutes > parseInt(cookTime)) return false;
-    if (search && !recipe.title.toLowerCase().includes(search.toLowerCase()))
-      return false;
-    return true;
-  });
-
-  if (loading) return <p className="text-center">Loading...</p>;
-  if (error) return <p className="text-center text-red-500">Error: {error}</p>;
-  if (filteredRecipes.length === 0)
-    return <p className="text-center text-gray-500">No recipes found</p>;
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
@@ -62,8 +53,15 @@ function Recipes() {
         </select>
       </div>
 
+=      {loading && <p className="text-center">Loading...</p>}
+      {error && <p className="text-center text-red-500">Error: {error}</p>}
+      {!loading && recipes.length === 0 && (
+        <p className="text-center text-gray-500">No recipes found</p>
+      )}
+
+   
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredRecipes.map((recipe) => (
+        {recipes.map((recipe) => (
           <div
             key={recipe.id}
             className="bg-white rounded shadow p-4 flex flex-col"
